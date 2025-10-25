@@ -114,7 +114,7 @@ const Quiz = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      <div className={`absolute inset-0 ${step === 0 ? 'gradient-bg-hero' : 'bg-gradient-to-br from-background via-background to-secondary/20'}`} />
+      <div className={`absolute inset-0 ${step === 0 ? 'gradient-bg-hero' : 'gradient-bg-dark'}`} />
       
       <div className="relative z-10 w-full max-w-4xl">
         <AnimatePresence mode="wait">
@@ -186,30 +186,35 @@ const Quiz = () => {
               className="space-y-8"
             >
               <div className="text-center">
-                <h2 className="text-4xl font-bold text-foreground mb-2">Choose Your Arc</h2>
-                <p className="text-muted-foreground">What path will you take?</p>
+                <h2 className="pixel-text text-3xl text-foreground mb-4 text-glow-villain">SELECT ARC</h2>
+                <p className="text-muted-foreground text-xs">CHOOSE YOUR PATH</p>
               </div>
               
               <div className="grid md:grid-cols-2 gap-4">
                 {arcOptions.map((option) => {
                   const Icon = option.icon;
                   return (
-                    <Card
+                    <motion.div
                       key={option.type}
-                      onClick={() => {
-                        setSelectedArc(option.type);
-                        setStep(2);
-                      }}
-                      className={`p-6 cursor-pointer transition-all duration-300 hover:scale-105 ${
-                        selectedArc === option.type ? `border-${option.type} glow-${option.type}` : ""
-                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <div className="space-y-4">
-                        <Icon className={`w-12 h-12 text-${option.type}`} />
-                        <h3 className="text-2xl font-bold">{option.title}</h3>
-                        <p className="text-muted-foreground">{option.description}</p>
-                      </div>
-                    </Card>
+                      <Card
+                        onClick={() => {
+                          setSelectedArc(option.type);
+                          setStep(2);
+                        }}
+                        className={`pixel-border p-6 cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur border-2 hover:border-primary ${
+                          selectedArc === option.type ? "border-primary glow-villain" : "border-border"
+                        }`}
+                      >
+                        <div className="space-y-4">
+                          <Icon className="w-12 h-12 text-primary animate-bounce-slow" />
+                          <h3 className="text-lg font-bold pixel-text">{option.title}</h3>
+                          <p className="text-muted-foreground text-xs">{option.description}</p>
+                        </div>
+                      </Card>
+                    </motion.div>
                   );
                 })}
               </div>
@@ -225,25 +230,30 @@ const Quiz = () => {
               className="space-y-8"
             >
               <div className="text-center">
-                <h2 className="text-4xl font-bold text-foreground mb-2">Your Main Goal</h2>
-                <p className="text-muted-foreground">Where will you focus your energy?</p>
+                <h2 className="pixel-text text-3xl text-foreground mb-4 text-glow-villain">MAIN GOAL</h2>
+                <p className="text-muted-foreground text-xs">FOCUS YOUR POWER</p>
               </div>
               
               <div className="grid gap-4">
                 {goalOptions.map((option) => (
-                  <Card
+                  <motion.div
                     key={option.type}
-                    onClick={() => {
-                      setSelectedGoal(option.type);
-                      setStep(3);
-                    }}
-                    className={`p-6 cursor-pointer transition-all duration-300 hover:scale-105 ${
-                      selectedGoal === option.type ? `border-${selectedArc} glow-${selectedArc}` : ""
-                    }`}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
-                    <h3 className="text-xl font-bold mb-2">{option.title}</h3>
-                    <p className="text-muted-foreground">{option.description}</p>
-                  </Card>
+                    <Card
+                      onClick={() => {
+                        setSelectedGoal(option.type);
+                        setStep(3);
+                      }}
+                      className={`pixel-border p-6 cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur border-2 hover:border-primary ${
+                        selectedGoal === option.type ? "border-primary glow-villain" : "border-border"
+                      }`}
+                    >
+                      <h3 className="text-base font-bold mb-2 pixel-text">{option.title}</h3>
+                      <p className="text-muted-foreground text-xs">{option.description}</p>
+                    </Card>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>
@@ -258,42 +268,52 @@ const Quiz = () => {
               className="space-y-8"
             >
               <div className="text-center">
-                <h2 className="text-4xl font-bold text-foreground mb-2">Choose Your Avatar</h2>
-                <p className="text-muted-foreground">Who inspires your journey?</p>
+                <h2 className="pixel-text text-3xl text-foreground mb-4 text-glow-villain">SELECT AVATAR</h2>
+                <p className="text-muted-foreground text-xs">YOUR INSPIRATION</p>
               </div>
               
               <div className="grid md:grid-cols-3 gap-4">
                 {avatars.map((avatar) => (
-                  <Card
+                  <motion.div
                     key={avatar.id}
-                    onClick={() => {
-                      setSelectedAvatar(avatar);
-                    }}
-                    className={`p-4 cursor-pointer transition-all duration-300 hover:scale-105 ${
-                      selectedAvatar?.id === avatar.id ? `border-${selectedArc} glow-${selectedArc}` : ""
-                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <img
-                      src={avatar.imageUrl}
-                      alt={avatar.name}
-                      className="w-full h-40 object-cover rounded-lg mb-4"
-                    />
-                    <h3 className="text-lg font-bold">{avatar.name}</h3>
-                    <p className="text-sm text-muted-foreground">{avatar.series}</p>
-                  </Card>
+                    <Card
+                      onClick={() => {
+                        setSelectedAvatar(avatar);
+                      }}
+                      className={`pixel-border p-4 cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur border-2 hover:border-primary ${
+                        selectedAvatar?.id === avatar.id ? "border-primary glow-villain" : "border-border"
+                      }`}
+                    >
+                      <img
+                        src={avatar.imageUrl}
+                        alt={avatar.name}
+                        className="w-full h-40 object-cover pixel-border mb-4"
+                      />
+                      <h3 className="text-xs font-bold pixel-text">{avatar.name}</h3>
+                      <p className="text-xs text-muted-foreground mt-1">{avatar.series}</p>
+                    </Card>
+                  </motion.div>
                 ))}
               </div>
               
               {selectedAvatar && (
-                <div className="flex justify-center">
-                  <ArcButton
-                    arc={selectedArc}
+                <motion.div 
+                  className="flex justify-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <motion.button
                     onClick={handleComplete}
-                    className="px-12 py-6"
+                    className="pixel-button px-12 py-4 bg-primary hover:bg-primary/80 text-primary-foreground font-bold text-sm transition-all animate-pulse-glow"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    Begin Your Journey
-                  </ArcButton>
-                </div>
+                    BEGIN JOURNEY
+                  </motion.button>
+                </motion.div>
               )}
             </motion.div>
           )}

@@ -81,25 +81,29 @@ const Dashboard = () => {
   const theme = getArcTheme(profile.arc);
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <div className="min-h-screen p-4 md:p-8 gradient-bg-dark">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex justify-between items-start">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="space-y-2"
+            className="space-y-3"
           >
-            <h1 className={cn("text-4xl md:text-5xl font-bold", theme.textGlow)}>
-              Welcome, {profile.name}
+            <h1 className={cn("text-2xl md:text-3xl font-bold pixel-text", theme.textGlow, "animate-float")}>
+              {profile.name.toUpperCase()}
             </h1>
-            <p className="text-muted-foreground italic">"{quote}"</p>
+            <p className="text-muted-foreground text-xs">"{quote}"</p>
           </motion.div>
           
-          <Button variant="outline" onClick={handleLogout}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
+          <motion.button 
+            onClick={handleLogout}
+            className="pixel-button px-4 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-xs"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            LOGOUT
+          </motion.button>
         </div>
 
         {/* Profile Card */}
@@ -108,24 +112,25 @@ const Dashboard = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className={cn("p-6 border-2", `border-${theme.color}`, theme.glow)}>
+          <Card className={cn("pixel-border p-6 border-2 bg-card/80 backdrop-blur", theme.glow, "border-primary")}>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="flex items-center gap-4">
-                <img
+                <motion.img
                   src={profile.avatar.imageUrl}
                   alt={profile.avatar.name}
-                  className="w-20 h-20 rounded-full object-cover border-2 border-current"
+                  className="w-20 h-20 pixel-border object-cover border-2 border-primary"
+                  whileHover={{ scale: 1.1 }}
                 />
                 <div>
-                  <h3 className="text-xl font-bold">{profile.avatar.name}</h3>
-                  <p className="text-sm text-muted-foreground">{profile.avatar.series}</p>
+                  <h3 className="text-sm font-bold pixel-text">{profile.avatar.name}</h3>
+                  <p className="text-xs text-muted-foreground mt-1">{profile.avatar.series}</p>
                 </div>
               </div>
               
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Trophy className={cn("w-5 h-5", `text-${theme.color}`)} />
-                  <span className="font-bold">Level {profile.level}</span>
+                  <Trophy className={cn("w-5 h-5 text-primary animate-bounce-slow")} />
+                  <span className="font-bold pixel-text text-xs">LVL {profile.level}</span>
                 </div>
                 <ProgressBar
                   value={profile.xp}
@@ -137,9 +142,9 @@ const Dashboard = () => {
               
               <div className="flex items-center gap-4 justify-end">
                 <div className="text-center">
-                  <Flame className="w-8 h-8 mx-auto text-orange-500 mb-1" />
-                  <p className="text-2xl font-bold">{profile.streak}</p>
-                  <p className="text-xs text-muted-foreground">Day Streak</p>
+                  <Flame className="w-8 h-8 mx-auto text-primary mb-1 animate-glow-pulse" />
+                  <p className="text-2xl font-bold pixel-text">{profile.streak}</p>
+                  <p className="text-xs text-muted-foreground">STREAK</p>
                 </div>
               </div>
             </div>
@@ -152,23 +157,23 @@ const Dashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card className="p-6">
-            <h2 className="text-2xl font-bold mb-6">Development Progress</h2>
+          <Card className="pixel-border p-6 bg-card/80 backdrop-blur border-2 border-border">
+            <h2 className="text-lg font-bold mb-6 pixel-text text-glow-villain">PROGRESS</h2>
             <div className="space-y-6">
               <ProgressBar
                 value={profile.mentalProgress}
                 arc={profile.arc}
-                label="Mental Development"
+                label="MENTAL"
               />
               <ProgressBar
                 value={profile.physicalProgress}
                 arc={profile.arc}
-                label="Physical Development"
+                label="PHYSICAL"
               />
               <ProgressBar
                 value={profile.overallProgress}
                 arc={profile.arc}
-                label="Overall Development"
+                label="OVERALL"
               />
             </div>
           </Card>
@@ -180,35 +185,39 @@ const Dashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <Card className="p-6">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-              <Zap className={`w-6 h-6 text-${theme.color}`} />
-              Daily Missions
+          <Card className="pixel-border p-6 bg-card/80 backdrop-blur border-2 border-border">
+            <h2 className="text-lg font-bold mb-6 flex items-center gap-2 pixel-text text-glow-villain">
+              <Zap className="w-6 h-6 text-primary animate-glow-pulse" />
+              MISSIONS
             </h2>
             <div className="space-y-4">
-              {profile.missions.map((mission) => (
-                <div
+              {profile.missions.map((mission, index) => (
+                <motion.div
                   key={mission.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 + index * 0.1 }}
                   className={cn(
-                    "flex items-start gap-4 p-4 rounded-lg border transition-all",
-                    mission.completed ? "bg-muted/50 border-muted" : "bg-card border-border hover:border-current"
+                    "pixel-border flex items-start gap-4 p-4 border-2 transition-all",
+                    mission.completed ? "bg-muted/30 border-muted" : "bg-card/50 border-border hover:border-primary"
                   )}
                 >
                   <Checkbox
                     checked={mission.completed}
                     onCheckedChange={() => handleMissionToggle(mission.id)}
                     disabled={mission.completed}
+                    className="mt-1"
                   />
                   <div className="flex-1">
-                    <h3 className={cn("font-bold", mission.completed && "line-through text-muted-foreground")}>
-                      {mission.title}
+                    <h3 className={cn("font-bold pixel-text text-xs", mission.completed && "line-through text-muted-foreground")}>
+                      {mission.title.toUpperCase()}
                     </h3>
-                    <p className="text-sm text-muted-foreground">{mission.description}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{mission.description}</p>
                   </div>
-                  <div className={cn("text-sm font-bold", `text-${theme.color}`)}>
-                    +{mission.xpReward} XP
+                  <div className="text-xs font-bold pixel-text text-primary">
+                    +{mission.xpReward}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </Card>
