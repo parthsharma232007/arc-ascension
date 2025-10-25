@@ -114,45 +114,66 @@ const Quiz = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-secondary/20" />
+      <div className={`absolute inset-0 ${step === 0 ? 'gradient-bg-hero' : 'bg-gradient-to-br from-background via-background to-secondary/20'}`} />
       
       <div className="relative z-10 w-full max-w-4xl">
         <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div
               key="name"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="text-center space-y-8"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="flex items-center justify-center min-h-screen"
             >
-              <h1 className="text-6xl font-bold text-foreground mb-2 text-glow-hero">
-                MyArc
-              </h1>
-              <p className="text-xl text-muted-foreground">Begin Your Transformation Journey</p>
-              
-              <Card className="p-8 bg-card/50 backdrop-blur border-border">
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-lg">What's your name?</Label>
-                    <Input
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Enter your name"
-                      className="text-lg py-6"
-                    />
-                  </div>
+              <div className="w-full max-w-md space-y-8 text-center px-4">
+                {/* Pixelated Logo */}
+                <motion.h1 
+                  className="pixel-text text-7xl text-white mb-4 tracking-wider"
+                  initial={{ y: -20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                >
+                  MYARC
+                </motion.h1>
+                
+                {/* Tagline */}
+                <motion.p 
+                  className="text-white/90 text-sm mb-12"
+                  initial={{ y: -10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  Your personal transformation app
+                </motion.p>
+                
+                {/* Username Input */}
+                <motion.div
+                  className="space-y-6 mt-16"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                >
+                  <Input
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="ENTER YOUR NAME"
+                    className="pixel-button bg-white/10 border-2 border-white/30 text-white placeholder:text-white/50 text-center py-6 text-sm backdrop-blur-sm hover:bg-white/20 transition-all focus:bg-white/20 focus:border-white/50"
+                  />
                   
-                  <ArcButton
-                    arc="hero"
+                  {/* Pixelated Start Button */}
+                  <motion.button
                     onClick={() => name && setStep(1)}
-                    className="w-full py-6"
+                    disabled={!name}
+                    className="pixel-button w-full py-4 bg-purple-400 hover:bg-purple-300 disabled:bg-purple-400/50 text-purple-900 font-bold text-sm transition-all disabled:cursor-not-allowed"
+                    whileHover={name ? { scale: 1.05 } : {}}
+                    whileTap={name ? { scale: 0.95 } : {}}
                   >
-                    Start Your Arc
-                  </ArcButton>
-                </div>
-              </Card>
+                    START
+                  </motion.button>
+                </motion.div>
+              </div>
             </motion.div>
           )}
 

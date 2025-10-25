@@ -99,6 +99,38 @@ All colors MUST be HSL.
   }
 }
 
+/* Pixelated Font and Styles */
+.pixel-text {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  image-rendering: pixelated;
+  text-shadow: 
+    2px 2px 0px rgba(0, 0, 0, 0.3),
+    4px 4px 0px rgba(255, 255, 255, 0.1);
+}
+
+.gradient-bg-hero {
+  background: linear-gradient(180deg, 
+    #FF1B8D 0%,
+    #FF1B8D 20%,
+    #D946EF 40%,
+    #A855F7 60%,
+    #6366F1 80%,
+    #1E1B4B 100%
+  );
+}
+
+.pixel-button {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  image-rendering: pixelated;
+  text-transform: uppercase;
+  clip-path: polygon(
+    8px 0, calc(100% - 8px) 0,
+    100% 8px, 100% calc(100% - 8px),
+    calc(100% - 8px) 100%, 8px 100%,
+    0 calc(100% - 8px), 0 8px
+  );
+}
+
 @layer utilities {
   .glow-hero {
     box-shadow: var(--glow-md) hsl(var(--hero-glow) / 0.5);
