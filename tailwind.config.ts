@@ -47,15 +47,25 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+        hero: {
+          DEFAULT: "hsl(var(--hero-primary))",
+          secondary: "hsl(var(--hero-secondary))",
+          glow: "hsl(var(--hero-glow))",
+        },
+        villain: {
+          DEFAULT: "hsl(var(--villain-primary))",
+          secondary: "hsl(var(--villain-secondary))",
+          glow: "hsl(var(--villain-glow))",
+        },
+        redemption: {
+          DEFAULT: "hsl(var(--redemption-primary))",
+          secondary: "hsl(var(--redemption-secondary))",
+          glow: "hsl(var(--redemption-glow))",
+        },
+        inter: {
+          DEFAULT: "hsl(var(--inter-primary))",
+          secondary: "hsl(var(--inter-secondary))",
+          glow: "hsl(var(--inter-glow))",
         },
       },
       borderRadius: {
