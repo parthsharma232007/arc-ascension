@@ -9,6 +9,10 @@ import { ArcType, GoalType, Avatar, UserProfile, Mission } from "@/types";
 import { avatars } from "@/lib/avatars";
 import { saveUserProfile } from "@/lib/storage";
 import { Swords, Snowflake, Sparkles, Moon } from "lucide-react";
+import heroSwords from "@/assets/hero-swords.png";
+import villainSkull from "@/assets/villain-skull.png";
+import redemptionGhost from "@/assets/redemption-ghost.png";
+import winterSnowflakes from "@/assets/winter-snowflakes.png";
 
 const Quiz = () => {
   const navigate = useNavigate();
@@ -193,26 +197,55 @@ const Quiz = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 {arcOptions.map((option) => {
                   const Icon = option.icon;
+                  const arcImages = {
+                    hero: heroSwords,
+                    villain: villainSkull,
+                    redemption: redemptionGhost,
+                    inter: winterSnowflakes,
+                  };
+                  const arcAnimations = {
+                    hero: "animate-sword-clash",
+                    villain: "animate-skull-rise",
+                    redemption: "animate-ghost-float",
+                    inter: "animate-snowfall",
+                  };
+                  const arcGradients = {
+                    hero: "hover:bg-gradient-to-br hover:from-blue-500 hover:to-yellow-500",
+                    villain: "hover:bg-gradient-to-br hover:from-purple-600 hover:to-black",
+                    redemption: "hover:bg-gradient-to-br hover:from-green-600 hover:to-stone-800",
+                    inter: "hover:bg-gradient-to-br hover:from-sky-400 hover:to-white",
+                  };
                   return (
                     <motion.div
                       key={option.type}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      className="relative"
                     >
                       <Card
                         onClick={() => {
                           setSelectedArc(option.type);
                           setStep(2);
                         }}
-                        className={`pixel-border p-6 cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur border-2 hover:border-primary ${
+                        className={`pixel-border p-6 cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur border-2 hover:border-primary relative overflow-hidden group h-[280px] ${
+                          arcGradients[option.type as keyof typeof arcGradients]
+                        } ${
                           selectedArc === option.type ? "border-primary glow-villain" : "border-border"
                         }`}
                       >
-                        <div className="space-y-4">
-                          <Icon className="w-12 h-12 text-primary animate-bounce-slow" />
-                          <h3 className="text-lg font-bold pixel-text">{option.title}</h3>
-                          <p className="text-muted-foreground text-xs">{option.description}</p>
+                        <div className="space-y-4 relative z-10">
+                          <Icon className="w-12 h-12 text-primary group-hover:text-white transition-colors animate-bounce-slow" />
+                          <h3 className="text-lg font-bold pixel-text group-hover:text-white transition-colors">{option.title}</h3>
+                          <p className="text-muted-foreground text-xs group-hover:text-white/80 transition-colors">{option.description}</p>
                         </div>
+                        <motion.img
+                          src={arcImages[option.type as keyof typeof arcImages]}
+                          alt={option.title}
+                          className={`absolute inset-0 w-full h-full object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none ${
+                            arcAnimations[option.type as keyof typeof arcAnimations]
+                          }`}
+                          initial={{ opacity: 0 }}
+                        />
                       </Card>
                     </motion.div>
                   );
