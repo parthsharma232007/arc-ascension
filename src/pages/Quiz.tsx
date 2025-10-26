@@ -8,7 +8,7 @@ import { ArcButton } from "@/components/ArcButton";
 import { ArcType, GoalType, Avatar, UserProfile, Mission } from "@/types";
 import { avatars } from "@/lib/avatars";
 import { saveUserProfile } from "@/lib/storage";
-import { Swords, Brain, Sparkles, Moon } from "lucide-react";
+import { Swords, Snowflake, Sparkles, Moon } from "lucide-react";
 
 const Quiz = () => {
   const navigate = useNavigate();
@@ -88,9 +88,9 @@ const Quiz = () => {
     },
     {
       type: "inter",
-      title: "Inter Arc",
-      description: "Journey within for personal growth",
-      icon: Brain,
+      title: "Winter Arc",
+      description: "Embrace the cold, build discipline in isolation",
+      icon: Snowflake,
     },
   ];
 

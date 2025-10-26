@@ -46,9 +46,9 @@ export const arcQuotes = {
     "Forgiveness starts with forgiving yourself.",
   ],
   inter: [
-    "True strength comes from understanding yourself.",
-    "Growth happens in silence and solitude.",
-    "The journey within is the most important journey.",
+    "Winter sharpens the blade. Embrace the cold.",
+    "In isolation, legends are forged.",
+    "Discipline in darkness, power in silence.",
   ],
 };
 
