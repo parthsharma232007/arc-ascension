@@ -6,6 +6,7 @@ export interface Avatar {
   name: string;
   series: string;
   imageUrl: string;
+  arc: ArcType;
 }
 
 export interface UserProfile {

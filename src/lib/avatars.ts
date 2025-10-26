@@ -1,40 +1,124 @@
 import { Avatar } from "@/types";
+import allCharacters from "@/assets/all-characters.png";
 
 export const avatars: Avatar[] = [
+  // Hero Arc
+  {
+    id: "sung-jin-woo-hero",
+    name: "Sung Jin Woo",
+    series: "Solo Leveling",
+    imageUrl: allCharacters,
+    arc: "hero",
+  },
+  {
+    id: "tanjiro",
+    name: "Tanjiro Kamado",
+    series: "Demon Slayer",
+    imageUrl: allCharacters,
+    arc: "hero",
+  },
   {
     id: "goku",
     name: "Son Goku",
-    series: "Dragon Ball Z",
-    imageUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=400&fit=crop",
+    series: "Dragon Ball",
+    imageUrl: allCharacters,
+    arc: "hero",
+  },
+  {
+    id: "baki",
+    name: "Baki Hanma",
+    series: "Baki",
+    imageUrl: allCharacters,
+    arc: "hero",
+  },
+  
+  // Villain Arc
+  {
+    id: "sukuna",
+    name: "Sukuna",
+    series: "Jujutsu Kaisen",
+    imageUrl: allCharacters,
+    arc: "villain",
   },
   {
     id: "eren",
     name: "Eren Yeager",
     series: "Attack on Titan",
-    imageUrl: "https://images.unsplash.com/photo-1614732414444-096e5f1122d5?w=400&h=400&fit=crop",
+    imageUrl: allCharacters,
+    arc: "villain",
   },
   {
-    id: "gojo",
-    name: "Gojo Satoru",
+    id: "toji",
+    name: "Toji Fushiguro",
     series: "Jujutsu Kaisen",
-    imageUrl: "https://images.unsplash.com/photo-1578632292335-df3abbb0d586?w=400&h=400&fit=crop",
+    imageUrl: allCharacters,
+    arc: "villain",
   },
   {
-    id: "zoro",
-    name: "Roronoa Zoro",
-    series: "One Piece",
-    imageUrl: "https://images.unsplash.com/photo-1578632292335-df3abbb0d586?w=400&h=400&fit=crop",
+    id: "garou",
+    name: "Garou",
+    series: "One Punch Man",
+    imageUrl: allCharacters,
+    arc: "villain",
+  },
+  
+  // Redemption Arc
+  {
+    id: "sung-jin-woo-redemption",
+    name: "Sung Jin Woo",
+    series: "Solo Leveling",
+    imageUrl: allCharacters,
+    arc: "redemption",
   },
   {
-    id: "itachi",
-    name: "Itachi Uchiha",
-    series: "Naruto",
-    imageUrl: "https://images.unsplash.com/photo-1614732414444-096e5f1122d5?w=400&h=400&fit=crop",
+    id: "saitama",
+    name: "Saitama",
+    series: "One Punch Man",
+    imageUrl: allCharacters,
+    arc: "redemption",
   },
   {
-    id: "levi",
-    name: "Levi Ackerman",
-    series: "Attack on Titan",
-    imageUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=400&fit=crop",
+    id: "jack",
+    name: "Jack Hanma",
+    series: "Baki",
+    imageUrl: allCharacters,
+    arc: "redemption",
+  },
+  {
+    id: "itadori",
+    name: "Yuji Itadori",
+    series: "Jujutsu Kaisen",
+    imageUrl: allCharacters,
+    arc: "redemption",
+  },
+  
+  // Winter Arc
+  {
+    id: "guts",
+    name: "Guts",
+    series: "Berserk",
+    imageUrl: allCharacters,
+    arc: "inter",
+  },
+  {
+    id: "yami",
+    name: "Yami Sukehiro",
+    series: "Black Clover",
+    imageUrl: allCharacters,
+    arc: "inter",
+  },
+  {
+    id: "vegeta",
+    name: "Vegeta",
+    series: "Dragon Ball",
+    imageUrl: allCharacters,
+    arc: "inter",
+  },
+  {
+    id: "yoshikage",
+    name: "Yoshikage Kira",
+    series: "JoJo's Bizarre Adventure",
+    imageUrl: allCharacters,
+    arc: "inter",
   },
 ];
