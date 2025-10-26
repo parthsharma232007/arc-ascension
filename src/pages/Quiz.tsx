@@ -287,29 +287,34 @@ const Quiz = () => {
               className="space-y-8"
             >
               <div className="text-center">
-                <h2 className="pixel-text text-3xl text-foreground mb-4 text-glow-villain">SELECT AVATAR</h2>
-                <p className="text-muted-foreground text-xs">YOUR INSPIRATION</p>
+                <h2 className="pixel-text text-3xl text-foreground mb-4 text-glow-villain">CHOOSE YOUR AVATAR</h2>
+                <p className="text-muted-foreground text-xs">TO HELP YOU WITH YOUR JOURNEY</p>
               </div>
               
               <div className="grid md:grid-cols-2 gap-4">
-                {avatars.filter(avatar => avatar.arc === selectedArc).map((avatar) => (
+                {avatars.filter(avatar => avatar.arc === selectedArc).map((avatar, index) => (
                   <motion.div
                     key={avatar.id}
-                    whileHover={{ scale: 1.05 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ scale: 1.05, y: -5 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <Card
                       onClick={() => {
                         setSelectedAvatar(avatar);
                       }}
-                      className={`pixel-border p-4 cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur border-2 hover:border-foreground ${
+                      className={`pixel-border p-4 cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur border-2 hover:border-foreground hover:shadow-lg hover:shadow-primary/20 ${
                         selectedAvatar?.id === avatar.id ? "border-foreground glow-villain" : "border-border"
                       }`}
                     >
-                      <img
+                      <motion.img
                         src={avatar.imageUrl}
                         alt={avatar.name}
                         className="w-full h-40 object-cover pixel-border mb-4"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.2 }}
                       />
                       <h3 className="text-xs font-bold pixel-text">{avatar.name}</h3>
                       <p className="text-xs text-muted-foreground mt-1">{avatar.series}</p>

@@ -1,5 +1,9 @@
 import { Avatar } from "@/types";
 import allCharacters from "@/assets/all-characters.png";
+import sungJinWoo from "@/assets/sung-jin-woo.png";
+import tanjiro from "@/assets/tanjiro.png";
+import goku from "@/assets/goku.png";
+import baki from "@/assets/baki.png";
 
 export const avatars: Avatar[] = [
   // Hero Arc
@@ -7,28 +11,28 @@ export const avatars: Avatar[] = [
     id: "sung-jin-woo-hero",
     name: "Sung Jin Woo",
     series: "Solo Leveling",
-    imageUrl: allCharacters,
+    imageUrl: sungJinWoo,
     arc: "hero",
   },
   {
     id: "tanjiro",
     name: "Tanjiro Kamado",
     series: "Demon Slayer",
-    imageUrl: allCharacters,
+    imageUrl: tanjiro,
     arc: "hero",
   },
   {
     id: "goku",
     name: "Son Goku",
     series: "Dragon Ball",
-    imageUrl: allCharacters,
+    imageUrl: goku,
     arc: "hero",
   },
   {
     id: "baki",
     name: "Baki Hanma",
     series: "Baki",
-    imageUrl: allCharacters,
+    imageUrl: baki,
     arc: "hero",
   },
   
