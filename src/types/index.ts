@@ -9,6 +9,12 @@ export interface Avatar {
   arc: ArcType;
 }
 
+export interface TaskPreferences {
+  focusAreas: string[];
+  difficulty: string;
+  timeAvailable: string;
+}
+
 export interface UserProfile {
   name: string;
   arc: ArcType;
@@ -23,6 +29,8 @@ export interface UserProfile {
   streak: number;
   missions: Mission[];
   tasks: Task[];
+  taskPreferences: TaskPreferences;
+  lastTaskGenerationDate?: string;
 }
 
 export interface Mission {
@@ -37,6 +45,5 @@ export interface Mission {
 export interface Task {
   id: string;
   title: string;
-  time: string;
   completed: boolean;
 }

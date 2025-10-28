@@ -2,34 +2,22 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ProgressBar } from "@/components/ProgressBar";
 import { LevelUpModal } from "@/components/LevelUpModal";
 import { getUserProfile, saveUserProfile, clearUserProfile } from "@/lib/storage";
 import { getRandomQuote, getArcTheme } from "@/lib/arcTheme";
 import { UserProfile, Task } from "@/types";
-import { Trophy, Flame, LogOut, Zap, Plus, User, Trash2, Edit2 } from "lucide-react";
+import { LogOut, User, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [quote, setQuote] = useState("");
-  const [showTaskDialog, setShowTaskDialog] = useState(false);
-  const [taskTitle, setTaskTitle] = useState("");
-  const [taskTime, setTaskTime] = useState("");
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isLoadingTasks, setIsLoadingTasks] = useState(false);
 
   useEffect(() => {
     const savedProfile = getUserProfile();
@@ -37,13 +25,66 @@ const Dashboard = () => {
       navigate("/");
       return;
     }
-    // Initialize tasks array if it doesn't exist
     if (!savedProfile.tasks) {
       savedProfile.tasks = [];
     }
     setProfile(savedProfile);
     setQuote(getRandomQuote(savedProfile.arc));
+    
+    // Check if we need to generate new tasks
+    const today = new Date().toDateString();
+    const lastGenDate = savedProfile.lastTaskGenerationDate;
+    
+    if (!lastGenDate || lastGenDate !== today) {
+      generateDailyTasks(savedProfile);
+    }
   }, [navigate]);
+
+  const generateDailyTasks = async (currentProfile: UserProfile) => {
+    setIsLoadingTasks(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-daily-tasks`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            preferences: currentProfile.taskPreferences,
+            arc: currentProfile.arc,
+            avatar: currentProfile.avatar.name,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to generate tasks');
+      }
+
+      const data = await response.json();
+      const newTasks: Task[] = data.tasks.map((task: any, index: number) => ({
+        id: `${Date.now()}-${index}`,
+        title: task.title,
+        completed: false,
+      }));
+
+      const updatedProfile = {
+        ...currentProfile,
+        tasks: newTasks,
+        lastTaskGenerationDate: new Date().toDateString(),
+      };
+
+      setProfile(updatedProfile);
+      saveUserProfile(updatedProfile);
+      toast.success("Fresh tasks generated for today!");
+    } catch (error) {
+      console.error('Error generating tasks:', error);
+      toast.error("Failed to generate tasks. Please try again.");
+    } finally {
+      setIsLoadingTasks(false);
+    }
+  };
 
   const handleMissionToggle = (missionId: string) => {
     if (!profile) return;
@@ -92,53 +133,6 @@ const Dashboard = () => {
     navigate("/");
   };
 
-  const handleAddTask = () => {
-    if (!profile || !taskTitle.trim() || !taskTime.trim()) {
-      toast.error("Please fill in both title and time");
-      return;
-    }
-
-    const newTask: Task = {
-      id: Date.now().toString(),
-      title: taskTitle,
-      time: taskTime,
-      completed: false,
-    };
-
-    const updatedProfile = {
-      ...profile,
-      tasks: [...(profile.tasks || []), newTask],
-    };
-
-    setProfile(updatedProfile);
-    saveUserProfile(updatedProfile);
-    setTaskTitle("");
-    setTaskTime("");
-    setShowTaskDialog(false);
-    toast.success("Task added!");
-  };
-
-  const handleEditTask = () => {
-    if (!profile || !editingTask || !taskTitle.trim() || !taskTime.trim()) {
-      toast.error("Please fill in both title and time");
-      return;
-    }
-
-    const updatedTasks = profile.tasks.map((task) =>
-      task.id === editingTask.id
-        ? { ...task, title: taskTitle, time: taskTime }
-        : task
-    );
-
-    const updatedProfile = { ...profile, tasks: updatedTasks };
-    setProfile(updatedProfile);
-    saveUserProfile(updatedProfile);
-    setTaskTitle("");
-    setTaskTime("");
-    setEditingTask(null);
-    setShowTaskDialog(false);
-    toast.success("Task updated!");
-  };
 
   const handleToggleTask = (taskId: string) => {
     if (!profile) return;
@@ -162,19 +156,6 @@ const Dashboard = () => {
     toast.success("Task deleted!");
   };
 
-  const openEditDialog = (task: Task) => {
-    setEditingTask(task);
-    setTaskTitle(task.title);
-    setTaskTime(task.time);
-    setShowTaskDialog(true);
-  };
-
-  const openAddDialog = () => {
-    setEditingTask(null);
-    setTaskTitle("");
-    setTaskTime("");
-    setShowTaskDialog(true);
-  };
 
   if (!profile) return null;
 
@@ -218,25 +199,65 @@ const Dashboard = () => {
           </motion.button>
         </div>
 
-        {/* Avatar Card with Motivational Quote */}
+        {/* Character Display with Dialogue Bubble */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1 }}
+          className="relative flex justify-center items-center"
         >
-          <Card className={cn("pixel-border p-6 border-2 bg-card/80 backdrop-blur text-center", theme.glow, "border-primary")}>
-            <motion.img
+          {/* Dialogue Bubble */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="absolute -top-24 left-1/2 -translate-x-1/2 z-10"
+          >
+            <div className="relative pixel-border bg-card border-2 border-primary p-4 max-w-xs">
+              <p className="text-xs pixel-text text-center">{quote}</p>
+              {/* Speech bubble tail */}
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-primary" />
+            </div>
+          </motion.div>
+
+          {/* Character Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ 
+              delay: 0.2,
+              type: "spring",
+              stiffness: 200,
+              damping: 15
+            }}
+            whileHover={{ 
+              scale: 1.05,
+              rotate: [0, -2, 2, -2, 0],
+              transition: { duration: 0.5 }
+            }}
+            className="relative"
+          >
+            <img
               src={profile.avatar.imageUrl}
               alt={profile.avatar.name}
-              className="w-32 h-32 pixel-border object-cover border-2 border-primary mx-auto mb-4"
-              whileHover={{ scale: 1.1 }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
+              className={cn(
+                "w-64 h-64 object-cover pixel-border border-4 border-primary",
+                "shadow-2xl",
+                theme.glow
+              )}
             />
-            <h3 className="text-sm font-bold pixel-text mb-2">{profile.avatar.name}</h3>
-            <p className="text-xs text-muted-foreground italic">"{quote}"</p>
-          </Card>
+            {/* Character name badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="absolute -bottom-4 left-1/2 -translate-x-1/2 pixel-border bg-background border-2 border-primary px-4 py-1"
+            >
+              <p className="text-xs font-bold pixel-text whitespace-nowrap">
+                {profile.avatar.name.toUpperCase()}
+              </p>
+            </motion.div>
+          </motion.div>
         </motion.div>
 
         {/* Tasks Section */}
@@ -246,25 +267,33 @@ const Dashboard = () => {
           transition={{ delay: 0.3 }}
         >
           <Card className="pixel-border p-6 bg-card/80 backdrop-blur border-2 border-border">
-            <h2 className="text-lg font-bold mb-4 pixel-text text-center text-glow-villain">
-              ADD TASKS FOR YOUR DAY
-            </h2>
-            
-            {/* Add Task Button */}
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-bold pixel-text text-center flex-1 text-glow-villain">
+                YOUR AI-GENERATED DAILY TASKS
+              </h2>
               <motion.button
-                onClick={openAddDialog}
-                className="pixel-border w-16 h-16 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center border-2 border-primary"
-                whileHover={{ scale: 1.1 }}
+                onClick={() => profile && generateDailyTasks(profile)}
+                disabled={isLoadingTasks}
+                className="pixel-border px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-xs border-2 border-primary disabled:opacity-50"
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Plus className="w-8 h-8" />
+                {isLoadingTasks ? "GENERATING..." : "REFRESH"}
               </motion.button>
             </div>
 
             {/* Tasks List */}
             <div className="space-y-3">
-              {profile.tasks && profile.tasks.length > 0 ? (
+              {isLoadingTasks ? (
+                <div className="text-center py-12">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto"
+                  />
+                  <p className="text-xs pixel-text mt-4">GENERATING YOUR TASKS...</p>
+                </div>
+              ) : profile.tasks && profile.tasks.length > 0 ? (
                 profile.tasks.map((task, index) => (
                   <motion.div
                     key={task.id}
@@ -295,34 +324,20 @@ const Dashboard = () => {
                       >
                         {task.title.toUpperCase()}
                       </h3>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {task.time}
-                      </p>
                     </div>
-                    <div className="flex gap-2">
-                      <motion.button
-                        onClick={() => openEditDialog(task)}
-                        className="pixel-border p-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        disabled={task.completed}
-                      >
-                        <Edit2 className="w-3 h-3" />
-                      </motion.button>
-                      <motion.button
-                        onClick={() => handleDeleteTask(task.id)}
-                        className="pixel-border p-2 bg-destructive hover:bg-destructive/80 text-destructive-foreground border border-border"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </motion.button>
-                    </div>
+                    <motion.button
+                      onClick={() => handleDeleteTask(task.id)}
+                      className="pixel-border p-2 bg-destructive hover:bg-destructive/80 text-destructive-foreground border border-border"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </motion.button>
                   </motion.div>
                 ))
               ) : (
                 <p className="text-center text-muted-foreground text-xs py-8">
-                  No tasks yet. Click the + button to add your first task!
+                  No tasks available. Click REFRESH to generate new tasks!
                 </p>
               )}
             </div>
@@ -330,63 +345,6 @@ const Dashboard = () => {
         </motion.div>
 
       </div>
-
-      {/* Task Dialog */}
-      <Dialog open={showTaskDialog} onOpenChange={setShowTaskDialog}>
-        <DialogContent className="pixel-border bg-card border-2 border-primary max-w-md">
-          <DialogHeader>
-            <DialogTitle className="pixel-text text-lg text-glow-villain">
-              {editingTask ? "EDIT TASK" : "ADD NEW TASK"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label htmlFor="task-title" className="pixel-text text-xs">
-                TASK TITLE
-              </Label>
-              <Input
-                id="task-title"
-                value={taskTitle}
-                onChange={(e) => setTaskTitle(e.target.value)}
-                placeholder="Enter task title"
-                className="pixel-border border-2"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="task-time" className="pixel-text text-xs">
-                TIME
-              </Label>
-              <Input
-                id="task-time"
-                value={taskTime}
-                onChange={(e) => setTaskTime(e.target.value)}
-                placeholder="e.g., 9:00 AM - 10:00 AM"
-                className="pixel-border border-2"
-              />
-            </div>
-            <div className="flex gap-3 pt-4">
-              <Button
-                onClick={editingTask ? handleEditTask : handleAddTask}
-                className="pixel-border flex-1 bg-primary hover:bg-primary/90 text-primary-foreground border-2 border-primary"
-              >
-                {editingTask ? "UPDATE" : "ADD TASK"}
-              </Button>
-              <Button
-                onClick={() => {
-                  setShowTaskDialog(false);
-                  setEditingTask(null);
-                  setTaskTitle("");
-                  setTaskTime("");
-                }}
-                variant="secondary"
-                className="pixel-border flex-1 border-2"
-              >
-                CANCEL
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       <LevelUpModal
         isOpen={showLevelUp}

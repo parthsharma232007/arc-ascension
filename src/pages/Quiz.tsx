@@ -9,6 +9,7 @@ import { ArcType, GoalType, Avatar, UserProfile, Mission } from "@/types";
 import { avatars } from "@/lib/avatars";
 import { saveUserProfile } from "@/lib/storage";
 import { Swords, Snowflake, Sparkles, Moon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const Quiz = () => {
   const navigate = useNavigate();
@@ -17,9 +18,23 @@ const Quiz = () => {
   const [selectedArc, setSelectedArc] = useState<ArcType | null>(null);
   const [selectedGoal, setSelectedGoal] = useState<GoalType | null>(null);
   const [selectedAvatar, setSelectedAvatar] = useState<Avatar | null>(null);
+  const [focusAreas, setFocusAreas] = useState<string[]>([]);
+  const [difficulty, setDifficulty] = useState("");
+  const [timeAvailable, setTimeAvailable] = useState("");
+
+  const toggleFocusArea = (area: string) => {
+    setFocusAreas(prev => 
+      prev.includes(area) 
+        ? prev.filter(a => a !== area)
+        : [...prev, area]
+    );
+  };
 
   const handleComplete = () => {
     if (!name || !selectedArc || !selectedGoal || !selectedAvatar) return;
+    if (focusAreas.length === 0 || !difficulty || !timeAvailable) {
+      return;
+    }
 
     const initialMissions: Mission[] = [
       {
@@ -62,6 +77,11 @@ const Quiz = () => {
       streak: 0,
       missions: initialMissions,
       tasks: [],
+      taskPreferences: {
+        focusAreas,
+        difficulty,
+        timeAvailable,
+      },
     };
 
     saveUserProfile(profile);
@@ -331,15 +351,170 @@ const Quiz = () => {
                   animate={{ opacity: 1, y: 0 }}
                 >
                   <motion.button
-                    onClick={handleComplete}
+                    onClick={() => setStep(4)}
                     className="pixel-button px-12 py-4 bg-primary hover:bg-primary/80 text-primary-foreground font-bold text-sm transition-all animate-pulse-glow"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    BEGIN JOURNEY
+                    CONTINUE
                   </motion.button>
                 </motion.div>
               )}
+            </motion.div>
+          )}
+
+          {step === 4 && (
+            <motion.div
+              key="preferences"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-8"
+            >
+              <div className="text-center">
+                <h2 className="pixel-text text-2xl md:text-3xl text-foreground mb-4 text-glow-villain">CUSTOMIZE YOUR DAILY TASKS</h2>
+                <p className="text-muted-foreground text-xs">AI WILL GENERATE PERSONALIZED TASKS</p>
+              </div>
+
+              <div className="space-y-6">
+                {/* Focus Areas */}
+                <Card className="pixel-border p-6 bg-card/80 backdrop-blur border-2 border-border">
+                  <h3 className="text-sm font-bold pixel-text mb-4">FOCUS AREAS (SELECT MULTIPLE)</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {["Fitness", "Study", "Work", "Mindfulness", "Skills", "Creativity"].map((area) => (
+                      <motion.div
+                        key={area}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Card
+                          onClick={() => toggleFocusArea(area)}
+                          className={`pixel-border p-4 cursor-pointer transition-all border-2 hover:shadow-lg ${
+                            focusAreas.includes(area)
+                              ? "border-foreground bg-foreground/10"
+                              : "border-border hover:border-foreground"
+                          }`}
+                        >
+                          <p className="text-xs font-bold pixel-text text-center">
+                            {area.toUpperCase()}
+                          </p>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* Difficulty Level */}
+                <Card className="pixel-border p-6 bg-card/80 backdrop-blur border-2 border-border">
+                  <h3 className="text-sm font-bold pixel-text mb-4">DIFFICULTY LEVEL</h3>
+                  <div className="grid grid-cols-3 gap-3">
+                    {["Easy", "Medium", "Hard"].map((level) => (
+                      <motion.div
+                        key={level}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Card
+                          onClick={() => setDifficulty(level)}
+                          className={`pixel-border p-4 cursor-pointer transition-all border-2 hover:shadow-lg ${
+                            difficulty === level
+                              ? "border-foreground bg-foreground/10"
+                              : "border-border hover:border-foreground"
+                          }`}
+                        >
+                          <p className="text-xs font-bold pixel-text text-center">
+                            {level.toUpperCase()}
+                          </p>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* Time Available */}
+                <Card className="pixel-border p-6 bg-card/80 backdrop-blur border-2 border-border">
+                  <h3 className="text-sm font-bold pixel-text mb-4">DAILY TIME AVAILABLE</h3>
+                  <div className="grid grid-cols-3 gap-3">
+                    {["30 mins", "1 hour", "2+ hours"].map((time) => (
+                      <motion.div
+                        key={time}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Card
+                          onClick={() => setTimeAvailable(time)}
+                          className={`pixel-border p-4 cursor-pointer transition-all border-2 hover:shadow-lg ${
+                            timeAvailable === time
+                              ? "border-foreground bg-foreground/10"
+                              : "border-border hover:border-foreground"
+                          }`}
+                        >
+                          <p className="text-xs font-bold pixel-text text-center">
+                            {time.toUpperCase()}
+                          </p>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                </Card>
+              </div>
+
+              {focusAreas.length > 0 && difficulty && timeAvailable && (
+                <motion.div 
+                  className="flex justify-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <motion.button
+                    onClick={() => setStep(5)}
+                    className="pixel-button px-12 py-4 bg-primary hover:bg-primary/80 text-primary-foreground font-bold text-sm transition-all animate-pulse-glow"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    CONTINUE
+                  </motion.button>
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+
+          {step === 5 && (
+            <motion.div
+              key="name-final"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-8"
+            >
+              <div className="text-center">
+                <h2 className="pixel-text text-2xl md:text-3xl text-foreground mb-4 text-glow-villain">ONE LAST THING</h2>
+                <p className="text-muted-foreground text-xs">CONFIRM YOUR NAME</p>
+              </div>
+
+              <Card className="pixel-border p-8 bg-card/80 backdrop-blur border-2 border-border">
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name-confirm" className="pixel-text text-xs">YOUR NAME</Label>
+                    <Input
+                      id="name-confirm"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="ENTER YOUR NAME"
+                      className="pixel-border border-2 text-center"
+                    />
+                  </div>
+
+                  <motion.button
+                    onClick={handleComplete}
+                    disabled={!name}
+                    className="pixel-button w-full py-4 bg-primary hover:bg-primary/80 disabled:bg-primary/50 text-primary-foreground font-bold text-sm transition-all disabled:cursor-not-allowed animate-pulse-glow"
+                    whileHover={name ? { scale: 1.05 } : {}}
+                    whileTap={name ? { scale: 0.95 } : {}}
+                  >
+                    BEGIN JOURNEY
+                  </motion.button>
+                </div>
+              </Card>
             </motion.div>
           )}
         </AnimatePresence>

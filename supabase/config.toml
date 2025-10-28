@@ -1,0 +1,2 @@
+[functions.generate-daily-tasks]
+verify_jwt = false
