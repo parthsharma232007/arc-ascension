@@ -22,6 +22,7 @@ export interface UserProfile {
   overallProgress: number;
   streak: number;
   missions: Mission[];
+  tasks: Task[];
 }
 
 export interface Mission {
@@ -31,4 +32,11 @@ export interface Mission {
   xpReward: number;
   completed: boolean;
   category: GoalType;
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  time: string;
+  completed: boolean;
 }

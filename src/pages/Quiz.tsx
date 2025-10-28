@@ -61,6 +61,7 @@ const Quiz = () => {
       overallProgress: 0,
       streak: 0,
       missions: initialMissions,
+      tasks: [],
     };
 
     saveUserProfile(profile);
