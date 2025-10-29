@@ -17,31 +17,16 @@ serve(async (req) => {
     const { preferences, arc, avatar } = await req.json();
     console.log("Generating tasks with preferences:", preferences);
 
-    const prompt = `You are a motivational AI assistant helping someone on their ${arc} journey. 
-Generate 5 daily tasks based on these preferences:
-- Focus areas: ${preferences.focusAreas.join(', ')}
-- Difficulty level: ${preferences.difficulty}
-- Time available: ${preferences.timeAvailable}
+    const prompt = `Generate 5 daily tasks for someone on a ${arc} journey.
+Focus areas: ${preferences.focusAreas.join(', ')}
+Difficulty: ${preferences.difficulty}
+Time: ${preferences.timeAvailable}
 
-Create tasks that are:
-1. Specific and actionable
-2. Aligned with their ${arc} character arc
-3. Challenging but achievable
-4. Varied across their focus areas
-
-Return ONLY a JSON array of tasks with this exact format:
-[
-  {"title": "Task description here"},
-  {"title": "Another task description"},
-  {"title": "Third task description"},
-  {"title": "Fourth task description"},
-  {"title": "Fifth task description"}
-]
-
-Important: Return ONLY the JSON array, no other text.`;
+Return ONLY this JSON array format (no other text):
+[{"title": "task 1"},{"title": "task 2"},{"title": "task 3"},{"title": "task 4"},{"title": "task 5"}]`;
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: {
@@ -55,7 +40,7 @@ Important: Return ONLY the JSON array, no other text.`;
           }],
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 1024,
+            maxOutputTokens: 2048,
           }
         })
       }
